@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', init)
 
 let pendingTask;
 function beginTicks(){
-  scheduleNext(resolve);
 }
 
 function tick(resolve, reject){
