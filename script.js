@@ -1,6 +1,4 @@
-let canvas, ctx
-
-let test;
+let canvas, ctx, de;
 
 function init () {
   // set our config variables
@@ -10,19 +8,34 @@ function init () {
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  ctx.beginPath()
-  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+  de = new DisplayEngine(ctx);
+
+  beginTicks();
 }
 document.addEventListener('DOMContentLoaded', init)
 
-let pendingTask;
 function beginTicks(){
+  ctx.font = "30px Arial";
+
+  let lastT = new Date().getTime();
+  let p = Promise.resolve().then(()=>{
+    setTimeout(()=>{
+      chainTicks(p, lastT)
+    });
+  });
 }
 
-function tick(resolve, reject){
-  scheduleNext(resolve);
-}  
+function chainTicks(p, lastT){
+  let curr = new Date().getTime();
+  
+  de.tick(curr - lastT);
 
-function scheduleNext(){
-  pendingTask = new Promise(tick, resolve, reject);
+  lastT = curr;
+  p = p.then(()=>{
+    setTimeout(()=>{
+      chainTicks(p, lastT);
+    });
+  });
+
+  return p;
 }
