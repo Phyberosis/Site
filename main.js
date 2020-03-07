@@ -1,21 +1,25 @@
-let canvas, ctx, de;
+let de;
+
+document.addEventListener('DOMContentLoaded', init)
+window.addEventListener("resize", resize);
 
 function init () {
   // set our config variables
-  canvas = document.getElementById('myCanvas')
-  ctx = canvas.getContext('2d')
+  let canvas = document.getElementById('myCanvas')
+  let ctx = canvas.getContext('2d')
 
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight;
+  let rh = new ResourceHandler(()=>{
+    beginTicks();
+  });
 
-  de = new DisplayEngine(ctx);
-
-  beginTicks();
+  de = new DisplayEngine(ctx, rh);
 }
-document.addEventListener('DOMContentLoaded', init)
+
+function resize(){
+  de.resize();
+}
 
 function beginTicks(){
-  ctx.font = "30px Arial";
 
   let lastT = new Date().getTime();
   let p = Promise.resolve().then(()=>{
