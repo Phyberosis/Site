@@ -3,6 +3,8 @@ class DisplayEngine
     constructor(context){
         this.ctx = context;
         this.frame = 0;
+
+        this.avatar = new Image();
     }
 
     clear(){
