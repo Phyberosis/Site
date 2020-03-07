@@ -2,21 +2,24 @@ class DisplayEngine
 {
     constructor(context, rh){
         this.ctx = context;
-        this.frame = 0;
         this.rh = rh;
-
-        this.ctx.font = "30px Arial";
 
         this.resize();
 
         this.x = 30
         this.y = 0;
+
+        this.sec = 0;
+        this.frames = 0;
+        this.fps = "";
     }
 
     resize(){
         this.ctx.canvas.width  = window.innerWidth;
         this.ctx.canvas.height = window.innerHeight;
 
+        let fs = window.innerHeight / 60;
+        this.ctx.font = fs + "px Consolas";  
         // alert("hi");
     }
 
@@ -26,14 +29,15 @@ class DisplayEngine
     }
 
     tick(dt){
+        this.sec+=dt;
+        this.frames++;
         this.clear();
-          
         this.ctx.fillStyle = "white";
-        this.ctx.fillText(this.frame, this.x, this.y);
-        this.ctx.drawImage(this.rh.getAvatar(), 600 - this.x, this.y);
-        this.ctx.drawImage(this.rh.getAvatar(), 640 - this.x, this.y);
 
-        this.frame+=dt;
+        for(let i = 0; i<50; i++){
+            for(let j = 0; j<50; j++)
+                this.ctx.drawImage(this.rh.getAvatar(), 600 - this.x + (20*j), this.y + (20*i))
+        }
 
         this.x++;
         this.y++;
@@ -42,5 +46,18 @@ class DisplayEngine
             this.y = 0;
             this.x = 30;
         }
+
+        this.drawDebug();
+    }
+
+    drawDebug(){
+        if(this.sec >= 500){
+            this.fps = (this.frames * 2).toString();
+            this.sec = 0;
+            this.frames = 0;
+        }
+
+        this.ctx.fillStyle = "red";
+        this.ctx.fillText("FPS: "+this.fps, 0, parseInt(this.ctx.font));
     }
 }
