@@ -36,7 +36,7 @@ class DisplayEngine
 
         for(let i = 0; i<50; i++){
             for(let j = 0; j<50; j++)
-                this.ctx.drawImage(this.rh.getAvatar(), 600 - this.x + (20*j), this.y + (20*i))
+                this.ctx.drawImage(this.rh.getAvatar(), 600 - this.x + (20*j), this.y + (20*(50-i)))
         }
 
         this.x++;

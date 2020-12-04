@@ -1,12 +1,20 @@
 <!doctype html>
 <html>
+
 <head>
-    <link rel="stylesheet" href="style.css">
-    <script src="js/resourceHandler.js"></script>
-    <script src="js/displayEngine.js"></script>
-    <script src="main.js"></script>
+    <meta charset="utf-8">
+    <script src="pixi/pixi.min.js"></script>
+
+    <!-- must minify these for release -->
+
+    <script src="js/pixiConnector.js"></script>
+    <script src="js/engine.js"></script>
+
+    <script src="js/game/entity.js"></script>
 </head>
 <body>
-    <canvas id="myCanvas"></canvas>
+    <style>* {padding: 0; margin: 0}</style> <!-- why cant I move this to .css?? -->
+    <script src="main.js"></script>
 </body>
+
 </html>
