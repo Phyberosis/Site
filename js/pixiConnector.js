@@ -4,6 +4,7 @@ const SpriteIDs = {
 
 class PixiConnector {
     constructor(onComplete, onProgress) {
+        //canvas
         let app = new PIXI.Application({
             width: window.innerWidth,         // default: 800
             height: window.innerHeight,        // default: 600
@@ -12,43 +13,72 @@ class PixiConnector {
             resolution: 1       // default: 1
         });
         this.app = app;
-
-        //Add the canvas that Pixi automatically created for you to the HTML document
         document.body.appendChild(app.view);
 
         app.renderer.view.style.position = "absolute";
         app.renderer.view.style.display = "block";
         app.renderer.autoResize = true;
 
-        this.PRE = "res/";
+        // text
+        this.TextStyles = {
+            Example: new PIXI.TextStyle({
+                fontFamily: "Arial",
+                fontSize: 36,
+                fill: "white",
+                stroke: '#ff3300',
+                strokeThickness: 4,
+                dropShadow: true,
+                dropShadowColor: "#000000",
+                dropShadowBlur: 4,
+                dropShadowAngle: Math.PI / 6,
+                dropShadowDistance: 6,
+            }),
+            Debug: new PIXI.TextStyle({
+                fontFamily: "Courier",
+                fontSize: 24,
+                fill: '#ff3300'
+            })
+        }
 
+        this.PRE = "res/";
         let toadd = [];
-        for(let im of Object.values(SpriteIDs))
-        {
+        for (let im of Object.values(SpriteIDs)) {
             toadd.push(this.PRE + im);
         }
 
         PIXI.loader
             .add(toadd)
             .on("progress", onProgress)
-            .load(() => {
-                // let s = new PIXI.Sprite(PIXI.loader.resources[this.PRE + "avatar_128.PNG"].texture);
-                // app.stage.addChild(s);
-                onComplete()
-            });
+            .load(onComplete);
     }
 
-    MakeSprite(idString)
-    {
+    Render() {
+        this.app.render()
+    }
+
+    MakeText(txt, style) {
+        let t = new PIXI.Text(txt, style);
+        this.app.stage.addChild(t);
+        return t
+    }
+
+    MakeSprite(idString) {
         // console.log(idString)
-        // let s = new PIXI.Sprite(PIXI.loader.resources[this.PRE + idString].texture);
-        // this.app.stage.addChild(s);
-        // return s
+        let s = new PIXI.Sprite(PIXI.loader.resources[this.PRE + idString].texture);
+        this.app.stage.addChild(s);
+        return s
     }
 
-    DeleteSprite(sprite)
-    {
+    DeleteSprite(sprite) {
         this.app.stage.removeChild(sprite);
+    }
+
+    BringToFront(sprite)
+    {
+        let s = this.app.stage
+        s.removeChild(sprite)
+        console.log(sprite)
+        s.addChild(sprite)
     }
 
     Resize() {

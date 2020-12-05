@@ -1,4 +1,4 @@
-let dispatch;
+let eng;
 
 document.addEventListener('DOMContentLoaded', init)
 window.addEventListener("resize", resize);
@@ -6,10 +6,10 @@ window.addEventListener("resize", resize);
 function init () {
   // set our config variables
 
-  dispatch = new Engine();
+  eng = new Engine();
   // let rh = new ResourceHandler(dispatch.Begin);
 }
 
 function resize(){
-  pixi.resize();
+  eng.GetPixi().Resize();
 }
