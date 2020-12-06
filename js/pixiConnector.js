@@ -3,7 +3,7 @@ const SpriteIDs = {
 }
 
 class PixiConnector {
-    constructor(onComplete, onProgress) {
+    constructor(onComplete, onProgress, onFrame) {
         //canvas
         let app = new PIXI.Application({
             width: window.innerWidth,         // default: 800
@@ -12,7 +12,7 @@ class PixiConnector {
             transparent: false, // default: false
             resolution: 1       // default: 1
         });
-        this.app = app;
+        this._app = app;
         document.body.appendChild(app.view);
 
         app.renderer.view.style.position = "absolute";
@@ -49,39 +49,39 @@ class PixiConnector {
         PIXI.loader
             .add(toadd)
             .on("progress", onProgress)
-            .load(onComplete);
-    }
-
-    Render() {
-        this.app.render()
+            .load(() => {
+                
+                app.ticker.add(onFrame)
+                onComplete()
+            })
     }
 
     MakeText(txt, style) {
         let t = new PIXI.Text(txt, style);
-        this.app.stage.addChild(t);
+        this._app.stage.addChild(t);
         return t
     }
 
     MakeSprite(idString) {
         // console.log(idString)
         let s = new PIXI.Sprite(PIXI.loader.resources[this.PRE + idString].texture);
-        this.app.stage.addChild(s);
+        this._app.stage.addChild(s);
         return s
     }
 
     DeleteSprite(sprite) {
-        this.app.stage.removeChild(sprite);
+        this._app.stage.removeChild(sprite);
     }
 
     BringToFront(sprite)
     {
-        let s = this.app.stage
+        let s = this._app.stage
         s.removeChild(sprite)
-        console.log(sprite)
+        // console.log(sprite)
         s.addChild(sprite)
     }
 
     Resize() {
-        this.app.renderer.resize(window.innerWidth, window.innerHeight);
+        this._app.renderer.resize(window.innerWidth, window.innerHeight);
     }
 }

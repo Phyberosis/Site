@@ -5,9 +5,11 @@ class Entity
         this._sprite = sprite
         this.X = 0
         this.Y = 0
+        this.W = sprite.width
+        this.H = sprite.height
     }
 
-    Compile(dt)
+    Compile()
     {
         let s = this._sprite
         s.x = this.X

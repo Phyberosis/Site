@@ -5,9 +5,10 @@ class Debug
             ups: 0,
             fps: 0
         }
-        this._counters = {
-            updates: 0,
-            frames: 0,
+        this._data = {
+            updates: [0, 0, 0, 0],
+            frames: [0, 0, 0, 0],
+            i: 0,
             lastT: new Date().getTime()
         }
         let i = pixi.MakeText("test", pixi.TextStyles.Debug)
@@ -16,27 +17,45 @@ class Debug
 
     CountUpdate()
     {
-        this._counters.updates += 1
+        this._data.updates[this._data.i] += 1
+    }
+
+    CountFrame()
+    {   
+        this._data.frames[this._data.i] += 1
     }
 
     CompileInfo(pixi)
     {
         let txt = ""
         let info = this._info
-        let counters = this._counters
+        let data = this._data
         let now = new Date().getTime();
 
         pixi.BringToFront(this.Info)
+        this.CountFrame()
 
         const delta = 250
-        const factor = 1000 / delta
-        if (now - counters.lastT >= delta) {
-            info.ups = counters.updates * factor
-            info.fps = counters.frames * factor
+        if (now - data.lastT >= delta) {
 
-            counters.updates = 0
-            counters.frames = 0
-            counters.lastT = now
+            let ups = 0
+            for(let i of data.updates)
+            {
+                ups += i
+            }
+            info.ups = ups
+
+            let frames = 0
+            for(let i of data.updates)
+            {
+                frames += i
+            }
+            info.fps = frames
+
+            data.lastT = now
+            data.i = data.i >= 3? 0 : data.i + 1
+            data.updates[data.i] = 0
+            data.frames[data.i] = 0
         }
 
         let keys = Object.keys(info)
@@ -45,7 +64,6 @@ class Debug
         }
 
         this.Info.text = txt
-        this._counters.frames += 1
     }
 
     SetInfo(key, val)
