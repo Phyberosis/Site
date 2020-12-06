@@ -1,17 +1,15 @@
+let eng;
+
 document.addEventListener('DOMContentLoaded', init)
+window.addEventListener("resize", resize);
 
 function init () {
   // set our config variables
 
-  const eng = new Engine()
-  window.addEventListener("resize", () => {
-    eng.GetPixi().Resize();
-  });
-  // window.requestAnimationFrame(update)
+  eng = new Engine();
   // let rh = new ResourceHandler(dispatch.Begin);
 }
 
-// function update(now) {
-//   eng.Update(now)
-//   window.requestAnimationFrame(update)
-// }
+function resize(){
+  eng.GetPixi().Resize();
+}

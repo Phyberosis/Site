@@ -5,65 +5,38 @@ class Debug
             ups: 0,
             fps: 0
         }
-        this._data = {
-            updates: [0, 0, 0, 0],
-            frames: [0, 0, 0, 0],
-            i: 0,
-            lastT: new Date().getTime(),
-            lastOut: new Date().getTime()
+        this._counters = {
+            updates: 0,
+            frames: 0,
+            lastT: new Date().getTime()
         }
-
-        //let i = pixi.MakeText("test", pixi.TextStyles.Debug)
-        //this.Info = i
+        let i = pixi.MakeText("test", pixi.TextStyles.Debug)
+        this.Info = i
     }
 
     CountUpdate()
     {
-        this._data.updates[this._data.i] += 1
-    }
-
-    CountRender()
-    {
-        this._data.frames[this._data.i] += 1   
+        this._counters.updates += 1
     }
 
     CompileInfo(pixi)
     {
         let txt = ""
         let info = this._info
-        let data = this._data
+        let counters = this._counters
         let now = new Date().getTime();
-        //pixi.BringToFront(this.Info)
+
+        pixi.BringToFront(this.Info)
 
         const delta = 250
-        if (now - data.lastT >= delta) {
-            let i = data.i
+        const factor = 1000 / delta
+        if (now - counters.lastT >= delta) {
+            info.ups = counters.updates * factor
+            info.fps = counters.frames * factor
 
-            info.ups = 0
-            for(let i of data.updates)
-            {
-                info.ups += i
-                // console.log(data.updates)
-            }
-
-            info.fps = 0
-            for(let i of data.frames)
-            {
-                info.fps += i
-            }
-
-            data.i = i == 3? 0 : i + 1
-            data.updates[data.i] = 0
-            data.frames[data.i] = 0
-            data.lastT = now
-
-            
-        }
-
-        if(now - data.lastOut >= 1000)
-        {
-            console.log(info)
-            data.lastOut = now
+            counters.updates = 0
+            counters.frames = 0
+            counters.lastT = now
         }
 
         let keys = Object.keys(info)
@@ -71,8 +44,8 @@ class Debug
             txt += key + ": " + info[key] + "\n"
         }
 
-        //this.Info.text = txt
-        this._data = data
+        this.Info.text = txt
+        this._counters.frames += 1
     }
 
     SetInfo(key, val)
