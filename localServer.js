@@ -6,21 +6,28 @@ const port = 12345;
 
 const server = http.createServer((req, res) => {
   let ext, path = '.';
-  if (req.url == '/')
-  {
+  if (req.url == '/') {
     ext = 'html'
     path += '/index.html'
-  }else if(req.url.includes('.js'))
-  {
+  } else if (req.url.includes('.js')) {
     ext = 'javascript'
     path += req.url
-  }else{
-    console.log('hey Tony, something tried to load a file thats not html or js, look in localServer.js');
+  } else if (req.url.includes('.css')) {
+    ext = 'css'
+    path += req.url
+  } else if (req.url.includes('favicon.ico')) {
+    res.statusCode = 404
+    res.end();
+    console.log("fav icon? nah dude.")
+    return
+  } else {
+    console.log("hey Tony, something tried to load a file that's not html or js, look in localServer.js");
   }
 
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/' + ext);
 
+  console.log(req.url);
   console.log(path);
   fs.readFile(path, function (err, html) {
     if (err) {

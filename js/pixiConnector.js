@@ -3,21 +3,14 @@ const SpriteIDs = {
 }
 
 class PixiConnector {
-    constructor(onComplete, onProgress) {
+    constructor(onComplete, onProgress, tick) {
         //canvas
-        let app = new PIXI.Application({
-            width: window.innerWidth,         // default: 800
-            height: window.innerHeight,        // default: 600
-            antialias: true,    // default: false
-            transparent: false, // default: false
-            resolution: 1       // default: 1
-        });
-        this.app = app;
-        document.body.appendChild(app.view);
-
-        app.renderer.view.style.position = "absolute";
-        app.renderer.view.style.display = "block";
-        app.renderer.autoResize = true;
+        const canvas = document.getElementById("myCanvas")
+        const renderer = new PIXI.Renderer({
+            view: canvas,
+            width: window.innerWidth,
+            height: window.innerHeight
+        })
 
         // text
         this.TextStyles = {
@@ -40,48 +33,69 @@ class PixiConnector {
             })
         }
 
-        this.PRE = "res/";
-        let toadd = [];
-        for (let im of Object.values(SpriteIDs)) {
-            toadd.push(this.PRE + im);
+        // textures
+        const PRE = "res/";
+        let loader = new PIXI.Loader()
+        let keys = Object.keys(SpriteIDs)
+        for (let name of keys) {
+            loader = loader.add(name, PRE + SpriteIDs[name]);
+            console.log(name)
+            console.log(PRE + SpriteIDs[name])
         }
+        loader.onProgress.add(onProgress)
+        
+        let textures = {}
+        loader.onComplete.add(() => {
+            let res = loader.resources
+            let keys = Object.keys(res)
+            for(let k of keys)
+            {
+                textures[k] = res[k].texture
+                console.log(res[k].texture)
+            }
 
-        PIXI.loader
-            .add(toadd)
-            .on("progress", onProgress)
-            .load(onComplete);
+            this._textures = textures
+            onComplete()
+
+            ticker.add((time) => {
+                renderer.render(stage)
+            })
+            ticker.start()
+        })
+
+        loader.load()
+
+        //ticker
+        const ticker = new PIXI.Ticker()
+
+        //stage
+        const stage = new PIXI.Container()
+
+        //fields
+        this._stage = stage
+        this._renderer = renderer
+        this._ticker = ticker
     }
 
-    Render() {
-        this.app.render()
+    AddUpdate(fn)
+    {
+        this._ticker.add(fn)
     }
 
     MakeText(txt, style) {
         let t = new PIXI.Text(txt, style);
-        this.app.stage.addChild(t);
+        this._stage.addChild(t);
         return t
     }
 
     MakeSprite(idString) {
         // console.log(idString)
-        let s = new PIXI.Sprite(PIXI.loader.resources[this.PRE + idString].texture);
-        this.app.stage.addChild(s);
+        let s = new PIXI.Sprite(this._textures[idString])
+        this._stage.addChild(s);
         return s
     }
 
-    DeleteSprite(sprite) {
-        this.app.stage.removeChild(sprite);
-    }
-
-    BringToFront(sprite)
-    {
-        let s = this.app.stage
-        s.removeChild(sprite)
-        console.log(sprite)
-        s.addChild(sprite)
-    }
-
     Resize() {
-        this.app.renderer.resize(window.innerWidth, window.innerHeight);
+        this._renderer.resize(window.innerWidth, window.innerHeight);
     }
 }
